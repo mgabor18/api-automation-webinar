@@ -35,7 +35,7 @@ describe("COMMENTS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", comments => {
         expect(comments).to.be.instanceOf(Array);
-        expect(comments.length).not.to.equal(originalLength);
+        expect(comments.length).to.be.above(originalLength);
       });
     });
 
@@ -120,7 +120,7 @@ describe("COMMENTS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", comments => {
         expect(comments).to.be.instanceOf(Array);
-        expect(comments.length).not.to.equal(originalLength);
+        expect(comments.length).to.be.below(originalLength);
       });
     });
 

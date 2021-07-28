@@ -31,7 +31,7 @@ describe("POSTS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", posts => {
         expect(posts).to.be.instanceOf(Array);
-        expect(posts.length).not.to.equal(originalLength);
+        expect(posts.length).to.be.above(originalLength);
       });
     });
 
@@ -404,7 +404,7 @@ describe("POSTS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", posts => {
         expect(posts).to.be.instanceOf(Array);
-        expect(posts.length).not.to.equal(originalLength);
+        expect(posts.length).to.be.below(originalLength);
       });
     });
 

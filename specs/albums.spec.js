@@ -28,7 +28,7 @@ describe("ALBUMS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", albums => {
         expect(albums).to.be.instanceOf(Array);
-        expect(albums.length).not.to.equal(originalLength);
+        expect(albums.length).to.be.above(originalLength);
       });
     });
 
@@ -112,7 +112,7 @@ describe("ALBUMS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", albums => {
         expect(albums).to.be.instanceOf(Array);
-        expect(albums.length).not.to.equal(originalLength);
+        expect(albums.length).to.be.below(originalLength);
       });
     });
 

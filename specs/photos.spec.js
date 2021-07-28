@@ -16,7 +16,6 @@ describe("PHOTOS", () => {
       thumbnailUrl: "https://via.placeholder.com/180/771796",
     };
     it("should add a photo", async () => {
-      const originalLength = data.photos.length;
       const response = await chakram.post(api.url("photos"), photoData);
       expect(response.response.statusCode).to.match(/^20/);
       expect(response.body.data.id).to.be.defined;
@@ -32,7 +31,7 @@ describe("PHOTOS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", photos => {
         expect(photos).to.be.instanceOf(Array);
-        expect(photos.length).not.to.equal(originalLength);
+        expect(photos.length).to.be.above(4950);
       });
     });
 
@@ -119,7 +118,7 @@ describe("PHOTOS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", photos => {
         expect(photos).to.be.instanceOf(Array);
-        expect(photos.length).not.to.equal(originalLength);
+        expect(photos.length).to.be.below(originalLength);
       });
     });
 

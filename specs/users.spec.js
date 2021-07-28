@@ -34,7 +34,7 @@ describe("USERS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", users => {
         expect(users).to.be.instanceOf(Array);
-        expect(users.length).not.to.equal(originalLength);
+        expect(users.length).to.be.above(originalLength);
       });
     });
 
@@ -119,7 +119,7 @@ describe("USERS", () => {
       expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", users => {
         expect(users).to.be.instanceOf(Array);
-        expect(users.length).not.to.equal(originalLength);
+        expect(users.length).to.be.below(originalLength);
       });
     });
 
