@@ -7,28 +7,38 @@ const data = require("../server/data.json");
 
 describe("POSTS", () => {
   describe("CREATE", () => {
-    let addedId;
+    let addedId, originalLength, response;
     const postData = {
       id: 50000,
       title: "title",
       body: "body",
       userId: 1,
     };
-    it("should add a new post", async () => {
-      const originalLength = data.posts.length;
-      const response = await chakram.post(api.url("posts"), postData);
-      expect(response.response.statusCode).to.match(/^20/);
-      expect(response.body.data.id).to.be.defined;
-      addedId = response.body.data.id;
-      const post = await chakram.get(api.url(`posts/${addedId}`));
-      expect(post).to.have.status(200);
-      expect(post).to.have.json("data.id", addedId);
-      expect(post).to.have.json("data.title", `${postData.title}`);
-      expect(post).to.have.json("data.body", `${postData.body}`);
-      expect(post).to.have.json("data.userId", postData.userId);
 
+    before(async () => {
+      originalLength = data.users.length;
+      response = await chakram.post(api.url("posts"), postData);
+      addedId = response.body.data.id;
+    });
+
+    it("should be defined", async () => {
+      expect(response.body.data.id).to.be.defined;
+    });
+
+    it("should return with 200", async () => {
+      expect(response.response.statusCode).to.be.equal(201);
+    });
+
+    it("should add a post", async () => {
+      const post = await chakram.get(api.url(`posts/${addedId}`));
+      expect(post).to.have.json("data.id", addedId);
+      expect(post).to.have.json("data.title", postData.title);
+      expect(post).to.have.json("data.body", postData.body);
+      expect(post).to.have.json("data.userId", postData.userId);
+    });
+
+    it("should have greater element count", async () => {
       const responseGet = await chakram.get(api.url("posts"));
-      expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", posts => {
         expect(posts).to.be.instanceOf(Array);
         expect(posts.length).to.be.above(originalLength);

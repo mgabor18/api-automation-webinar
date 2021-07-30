@@ -7,7 +7,7 @@ const data = require("../server/data.json");
 
 describe("COMMENTS", () => {
   describe("CREATE", () => {
-    let addedId;
+    let addedId, originalLength, response;
     const commentData = {
       title: "title",
       body: "body",
@@ -16,23 +16,33 @@ describe("COMMENTS", () => {
       name: "Almara Krantya",
       email: "almarak@example.com",
     };
-    it("should add a comment", async () => {
-      const originalLength = data.comments.length;
-      const response = await chakram.post(api.url("comments"), commentData);
-      expect(response.response.statusCode).to.match(/^20/);
-      expect(response.body.data.id).to.be.defined;
-      addedId = response.body.data.id;
-      const comment = await chakram.get(api.url(`comments/${addedId}`));
-      expect(comment).to.have.status(200);
-      expect(comment).to.have.json("data.id", addedId);
-      expect(comment).to.have.json("data.title", `${commentData.title}`);
-      expect(comment).to.have.json("data.body", `${commentData.body}`);
-      expect(comment).to.have.json("data.postId", commentData.postId);
-      expect(comment).to.have.json("data.name", `${commentData.name}`);
-      expect(comment).to.have.json("data.email", `${commentData.email}`);
 
+    before(async () => {
+      originalLength = data.comments.length;
+      response = await chakram.post(api.url("comments"), commentData);
+      addedId = response.body.data.id;
+    });
+
+    it("should be defined", async () => {
+      expect(response.body.data.id).to.be.defined;
+    });
+
+    it("should return with 200", async () => {
+      expect(response.response.statusCode).to.be.equal(201);
+    });
+
+    it("should add a comment", async () => {
+      const comment = await chakram.get(api.url(`comments/${addedId}`));
+      expect(comment).to.have.json("data.id", addedId);
+      expect(comment).to.have.json("data.title", commentData.title);
+      expect(comment).to.have.json("data.body", commentData.body);
+      expect(comment).to.have.json("data.postId", commentData.postId);
+      expect(comment).to.have.json("data.name", commentData.name);
+      expect(comment).to.have.json("data.email", commentData.email);
+    });
+
+    it("should have greater element count", async () => {
       const responseGet = await chakram.get(api.url("comments"));
-      expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", comments => {
         expect(comments).to.be.instanceOf(Array);
         expect(comments.length).to.be.above(originalLength);

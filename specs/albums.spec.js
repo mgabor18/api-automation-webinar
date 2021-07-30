@@ -7,25 +7,36 @@ const data = require("../server/data.json");
 
 describe("ALBUMS", () => {
   describe("CREATE", () => {
-    let addedId;
+    let addedId, originalLength, response;
     const albumData = {
       userId: 1,
       id: 101,
       title: "title",
     };
-    it("should add an album", async () => {
-      const originalLength = data.albums.length;
-      const response = await chakram.post(api.url("albums"), albumData);
-      expect(response.response.statusCode).to.match(/^20/);
-      expect(response.body.data.id).to.be.defined;
+
+    before(async () => {
+      originalLength = data.albums.length;
+      response = await chakram.post(api.url("albums"), albumData);
       addedId = response.body.data.id;
+    });
+
+    it("should be defined", async () => {
+      expect(response.body.data.id).to.be.defined;
+    });
+
+    it("should return with 200", async () => {
+      expect(response.response.statusCode).to.be.equal(201);
+    });
+
+    it("should add an album", async () => {
       const album = await chakram.get(api.url(`albums/${addedId}`));
-      expect(album).to.have.status(200);
       expect(album).to.have.json("data.id", addedId);
-      expect(album).to.have.json("data.title", `${albumData.title}`);
+      expect(album).to.have.json("data.title", albumData.title);
       expect(album).to.have.json("data.userId", albumData.userId);
+    });
+
+    it("should have greater element count", async () => {
       const responseGet = await chakram.get(api.url("albums"));
-      expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", albums => {
         expect(albums).to.be.instanceOf(Array);
         expect(albums.length).to.be.above(originalLength);

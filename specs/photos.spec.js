@@ -7,7 +7,7 @@ const data = require("../server/data.json");
 
 describe("PHOTOS", () => {
   describe("CREATE", () => {
-    let addedId;
+    let addedId, originalLength, response;
     let photoData = {
       albumId: 1,
       id: 5005,
@@ -15,20 +15,31 @@ describe("PHOTOS", () => {
       url: "https://via.placeholder.com/600/798956",
       thumbnailUrl: "https://via.placeholder.com/180/771796",
     };
-    it("should add a photo", async () => {
-      const response = await chakram.post(api.url("photos"), photoData);
-      expect(response.response.statusCode).to.match(/^20/);
-      expect(response.body.data.id).to.be.defined;
-      addedId = response.body.data.id;
-      const photo = await chakram.get(api.url(`photos/${addedId}`));
-      expect(photo).to.have.status(200);
-      expect(photo).to.have.json("data.id", addedId);
-      expect(photo).to.have.json("data.title", `${photoData.title}`);
-      expect(photo).to.have.json("data.url", `${photoData.url}`);
-      expect(photo).to.have.json("data.thumbnailUrl", `${photoData.thumbnailUrl}`);
 
+    before(async () => {
+      originalLength = data.users.length;
+      response = await chakram.post(api.url("photos"), photoData);
+      addedId = response.body.data.id;
+    });
+
+    it("should be defined", async () => {
+      expect(response.body.data.id).to.be.defined;
+    });
+
+    it("should return with 200", async () => {
+      expect(response.response.statusCode).to.be.equal(201);
+    });
+
+    it("should add a photo", async () => {
+      const photo = await chakram.get(api.url(`photos/${addedId}`));
+      expect(photo).to.have.json("data.id", addedId);
+      expect(photo).to.have.json("data.title", photoData.title);
+      expect(photo).to.have.json("data.url", photoData.url);
+      expect(photo).to.have.json("data.thumbnailUrl", photoData.thumbnailUrl);
+    });
+
+    it("should have greater element count", async () => {
       const responseGet = await chakram.get(api.url("photos"));
-      expect(responseGet).to.have.status(200);
       expect(responseGet).to.have.json("data", photos => {
         expect(photos).to.be.instanceOf(Array);
         expect(photos.length).to.be.above(4950);
