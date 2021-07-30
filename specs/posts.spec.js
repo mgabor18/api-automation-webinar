@@ -16,7 +16,7 @@ describe("POSTS", () => {
     };
 
     before(async () => {
-      originalLength = data.users.length;
+      originalLength = data.posts.length;
       response = await chakram.post(api.url("posts"), postData);
       addedId = response.body.data.id;
     });

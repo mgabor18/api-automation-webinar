@@ -17,7 +17,7 @@ describe("PHOTOS", () => {
     };
 
     before(async () => {
-      originalLength = data.users.length;
+      originalLength = data.photos.length;
       response = await chakram.post(api.url("photos"), photoData);
       addedId = response.body.data.id;
     });
